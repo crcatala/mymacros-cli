@@ -108,7 +108,13 @@ export function registerAuthCommands(program: Command, ctx: CliContext): void {
       const message = credentialStatusMessage(source, configured, sessionFresh, username)
 
       if (ctx.output.format === 'json') {
-        output(ctx, { configured, sessionFresh, source: source ?? null, username: username ?? null, message })
+        output(ctx, {
+          configured,
+          sessionFresh,
+          source: source ?? null,
+          username: username ?? null,
+          message,
+        })
         if (!configured) process.exitCode = 1
         return
       }

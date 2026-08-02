@@ -121,7 +121,11 @@ export class MyMacrosClient {
   }
 
   private async saveSession(sessionId: string, username?: string): Promise<void> {
-    this.lastSessionStorage = await this.sessionStore.save(sessionId, this.options?.sessionStorage, username)
+    this.lastSessionStorage = await this.sessionStore.save(
+      sessionId,
+      this.options?.sessionStorage,
+      username,
+    )
   }
 
   private async clearSession(): Promise<void> {
