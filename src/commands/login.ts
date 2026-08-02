@@ -13,17 +13,20 @@ function credentialStatusMessage(
   source: CredentialSource | undefined,
   configured: boolean,
   sessionFresh: boolean | null,
+  username?: string,
 ): string {
   if (!configured) return 'No credentials are configured locally.'
+  const who = username ? `Logged in as ${username}` : 'Logged in'
+
   if (source === 'environment') {
-    return 'Credentials are configured through environment variables. Cached session freshness is not applicable.'
+    return `${who} (credentials from environment variables).`
   }
 
   const location = source === 'keyring' ? 'the system keyring' : 'a protected config file'
   const freshness = sessionFresh
     ? 'fresh and usable without logging in again'
     : 'expired and will require logging in again'
-  return `Credentials are configured in ${location}. The cached session is ${freshness}.`
+  return `${who} (credentials in ${location}). The cached session is ${freshness}.`
 }
 
 async function login(ctx: CliContext, opts: LoginOptions): Promise<void> {
@@ -101,10 +104,17 @@ export function registerAuthCommands(program: Command, ctx: CliContext): void {
       const source: CredentialSource | undefined = usesEnv ? 'environment' : info?.storage
       const configured = Boolean(source)
       const sessionFresh = usesEnv ? null : (info?.sessionFresh ?? null)
-      const message = credentialStatusMessage(source, configured, sessionFresh)
+      const username = usesEnv ? process.env.MYMACROS_USER : info?.username
+      const message = credentialStatusMessage(source, configured, sessionFresh, username)
 
       if (ctx.output.format === 'json') {
-        output(ctx, { configured, sessionFresh, source: source ?? null, message })
+        output(ctx, {
+          configured,
+          sessionFresh,
+          source: source ?? null,
+          username: username ?? null,
+          message,
+        })
         if (!configured) process.exitCode = 1
         return
       }

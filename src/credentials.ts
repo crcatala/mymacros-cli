@@ -16,6 +16,7 @@ export type StoredSessionInfo = {
   storage: SessionStorage
   timestamp: number
   sessionFresh: boolean
+  username?: string
 }
 
 export function isSessionFresh(timestamp: number): boolean {
@@ -24,13 +25,14 @@ export function isSessionFresh(timestamp: number): boolean {
 
 export type SessionStore = {
   load: () => Promise<SessionData | null>
-  save: (sessionId: string, storage?: SessionStorage) => Promise<SessionStorage>
+  save: (sessionId: string, storage?: SessionStorage, username?: string) => Promise<SessionStorage>
   clear: () => Promise<void>
 }
 
 type StoredSession = Omit<SessionData, 'sessionId'> & {
   storage?: SessionStorage
   sessionId?: string
+  username?: string
 }
 
 async function getKeytar() {
@@ -74,6 +76,7 @@ export async function getStoredSessionInfo(): Promise<StoredSessionInfo | null> 
     storage: stored.storage ?? (stored.sessionId ? 'config' : 'keyring'),
     timestamp: stored.timestamp,
     sessionFresh: isSessionFresh(stored.timestamp),
+    username: stored.username,
   }
 }
 
@@ -101,11 +104,12 @@ export async function loadStoredSession(): Promise<SessionData | null> {
 export async function saveStoredSession(
   sessionId: string,
   storage: SessionStorage = 'keyring',
+  username?: string,
 ): Promise<SessionStorage> {
   const timestamp = Date.now()
 
   if (storage === 'config') {
-    writeStoredSession({ sessionId, timestamp, storage })
+    writeStoredSession({ sessionId, timestamp, storage, username })
     try {
       await (await getKeytar()).deletePassword(SERVICE_NAME, ACCOUNT_NAME)
     } catch {
@@ -116,12 +120,12 @@ export async function saveStoredSession(
 
   try {
     await (await getKeytar()).setPassword(SERVICE_NAME, ACCOUNT_NAME, sessionId)
-    writeStoredSession({ timestamp, storage })
+    writeStoredSession({ timestamp, storage, username })
     return storage
   } catch {
     // Headless Linux environments often lack a Secret Service; retain the
     // session in the protected (0600) fallback instead of losing login state.
-    writeStoredSession({ sessionId, timestamp, storage: 'config' })
+    writeStoredSession({ sessionId, timestamp, storage: 'config', username })
     return 'config'
   }
 }
@@ -152,6 +156,7 @@ function errorMessage(error: unknown): string {
 
 export const defaultSessionStore: SessionStore = {
   load: loadStoredSession,
-  save: saveStoredSession,
+  save: (sessionId: string, storage?: SessionStorage, username?: string) =>
+    saveStoredSession(sessionId, storage, username),
   clear: clearStoredSession,
 }

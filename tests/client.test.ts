@@ -3,11 +3,11 @@ import { MyMacrosClient } from '../src/client.js'
 import type { SessionStore } from '../src/credentials.js'
 
 function createMemorySessionStore(): SessionStore {
-  let session: { sessionId: string; timestamp: number } | null = null
+  let session: { sessionId: string; timestamp: number; username?: string } | null = null
   return {
     load: async () => session,
-    save: async (sessionId, storage = 'keyring') => {
-      session = { sessionId, timestamp: Date.now() }
+    save: async (sessionId, storage = 'keyring', username?: string) => {
+      session = { sessionId, timestamp: Date.now(), username }
       return storage
     },
     clear: async () => {

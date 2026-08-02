@@ -74,7 +74,7 @@ export class MyMacrosClient {
     }
 
     this.sessionId = response.session_id
-    await this.saveSession(response.session_id)
+    await this.saveSession(response.session_id, response.uname ?? username)
     return response
   }
 
@@ -120,8 +120,12 @@ export class MyMacrosClient {
     return data
   }
 
-  private async saveSession(sessionId: string): Promise<void> {
-    this.lastSessionStorage = await this.sessionStore.save(sessionId, this.options?.sessionStorage)
+  private async saveSession(sessionId: string, username?: string): Promise<void> {
+    this.lastSessionStorage = await this.sessionStore.save(
+      sessionId,
+      this.options?.sessionStorage,
+      username,
+    )
   }
 
   private async clearSession(): Promise<void> {
