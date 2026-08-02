@@ -1,15 +1,31 @@
 # mymacros-cli
 
+[![npm version](https://img.shields.io/npm/v/mymacros-cli)](https://www.npmjs.com/package/mymacros-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Unofficial CLI client for [GetMyMacros](https://getmymacros.com), optimized for AI agent use.
 
 > **Unofficial software:** this project is not affiliated with, endorsed by, or supported by GetMyMacros. It relies on undocumented web endpoints that may change or stop working at any time. Review GetMyMacros' terms before use and use only with your own account.
 
 The client is based on observed web-app behavior. See `docs/` for implementation notes; no GetMyMacros source code is included.
 
-## Setup
+## Features
+
+- **Food and meal tracking** — search foods, log meals, update servings, copy meals, and manage notes and favorites
+- **Agent-friendly output** — JSON automatically when piped, stable IDs for command chaining, and machine-safe stdout
+- **Secure session storage** — OS keyring by default, with an explicit `0600` config-file fallback for headless environments
+- **Scriptable defaults** — date shortcuts, input validation, result limits, and plain or table output when needed
+
+## Installation
 
 ```bash
 npm install -g mymacros-cli
+```
+
+Or run it without installing:
+
+```bash
+npx mymacros-cli --help
 ```
 
 For development:
@@ -20,7 +36,21 @@ cd mymacros-cli
 npm ci
 ```
 
-### Authentication
+## Quick Start
+
+```bash
+# 1. Authenticate
+mymacros auth login
+
+# 2. See today's meals
+mymacros daily
+
+# 3. Find and add a food
+mymacros search "chicken breast"
+mymacros add 164298 --meal Lunch --serving 2
+```
+
+## Authentication
 
 Set credentials as environment variables (never stored to disk):
 
@@ -37,7 +67,7 @@ mymacros auth login
 
 Sessions are cached in your operating system keyring by default (macOS Keychain, Windows Credential Manager, or Linux Secret Service) and auto-refresh on expiry (~1 hour). In headless environments without a keyring, the CLI falls back to `~/.config/mymacros-cli/session.json`, protected with `0600` permissions. Use `mymacros auth login --use-config` to choose that fallback explicitly. Never commit credentials or session files.
 
-### Running
+## Running
 
 ```bash
 # During development (no build step needed)
