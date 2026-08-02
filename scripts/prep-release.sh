@@ -15,17 +15,23 @@ range='HEAD'
 echo '=== Release Prep ==='
 [[ -n "$last_tag" ]] && echo "Changes since: $last_tag" || echo 'No prior tag; showing all commits.'
 echo
-echo '=== Commits ==='
-git log "$range" --pretty=format:'- %s (%h)' --no-merges
-echo -e '\n\n=== Changed files ==='
+
+# ── Prompt first, so you can copy everything below it into an LLM ──
+cat <<'EOF'
+=== Changelog prompt (copy everything below this line) ===
+
+Draft Keep a Changelog entries from the commits below. Include only user-facing changes.
+Group items under Added, Changed, Fixed, Removed, or Security; omit empty groups.
+Exclude internal tests, CI, and routine dependency updates unless users are affected.
+
+=== Full commit messages ===
+EOF
+
+git log "$range" --format='## %s%n%n%b%n---' --no-merges
+
+echo -e '\n=== Changed files ==='
 if [[ -n "$last_tag" ]]; then
   git diff --stat "$range"
 else
   git diff --stat "$(git hash-object -t tree /dev/null)" HEAD
 fi
-echo -e '\n\n=== Changelog prompt ==='
-cat <<'EOF'
-Draft Keep a Changelog entries from these commits. Include only user-facing changes.
-Group items under Added, Changed, Fixed, Removed, or Security; omit empty groups.
-Exclude internal tests, CI, and routine dependency updates unless users are affected.
-EOF
