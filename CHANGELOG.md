@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-02
+
 ### Added
 
 - **Auth status shows username** — `mymacros auth status` now displays "Logged in as

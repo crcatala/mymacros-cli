@@ -1,6 +1,6 @@
 {
   "name": "mymacros-cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Unofficial CLI client for GetMyMacros, optimized for AI agent use",
   "license": "MIT",
   "author": "Christian Catalan <crcatala@gmail.com>",
