@@ -1,4 +1,5 @@
 import { Command, CommanderError } from 'commander'
+import packageJson from '../../package.json' with { type: 'json' }
 import { registerAddCommand } from '../commands/add.js'
 import { registerBrowseCommand } from '../commands/browse.js'
 import { registerCopyMealCommand } from '../commands/copy-meal.js'
@@ -6,7 +7,7 @@ import { registerDailyCommand } from '../commands/daily.js'
 import { registerDatesCommand } from '../commands/dates.js'
 import { registerDeleteMealCommand } from '../commands/delete-meal.js'
 import { registerFoodCommand } from '../commands/food.js'
-import { registerLoginCommand } from '../commands/login.js'
+import { registerAuthCommands } from '../commands/login.js'
 import { registerNoteCommand } from '../commands/note.js'
 import { registerRemoveCommand } from '../commands/remove.js'
 import { registerSearchCommand } from '../commands/search.js'
@@ -16,7 +17,7 @@ import type { CliContext } from './context.js'
 import { configureStyledHelp } from './help.js'
 import { addOutputOptions } from './options.js'
 
-const VERSION = '0.1.0'
+const VERSION = packageJson.version
 
 export function createProgram(ctx: CliContext): Command {
   const program = new Command()
@@ -37,7 +38,8 @@ export function createProgram(ctx: CliContext): Command {
     'afterAll',
     () => `
 ${ctx.colors.section('Examples — Getting Started')}
-${ex('mymacros login', 'Authenticate interactively (or set MYMACROS_USER / MYMACROS_PASSWORD)')}
+${ex('mymacros auth login', 'Authenticate interactively (or set MYMACROS_USER / MYMACROS_PASSWORD)')}
+${ex('mymacros auth status', 'Show where credentials are configured')}
 ${ex('mymacros daily', "Show today's meals and macros")}
 ${ex('mymacros daily yesterday', "Show yesterday's meals")}
 ${ex('mymacros daily 2026-01-15', 'Show meals for a specific date')}
@@ -99,7 +101,7 @@ ${ctx.colors.section('Agent Usage Notes')}
   addOutputOptions(program)
 
   // Register commands
-  registerLoginCommand(program, ctx)
+  registerAuthCommands(program, ctx)
   registerDailyCommand(program, ctx)
   registerSearchCommand(program, ctx)
   registerFoodCommand(program, ctx)
