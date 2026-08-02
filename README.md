@@ -292,9 +292,16 @@ MYMACROS_TEST_PASSWORD=dedicated-test-password \
 npm run test:live
 ```
 
-In GitHub Actions, run the **Live Tests** workflow manually and type `RUN`. Create a protected
-`live-tests` environment containing the `MYMACROS_TEST_USER` and `MYMACROS_TEST_PASSWORD`
-secrets before enabling it.
+Live requests are serialized and paced at **500 ms** by default (including login). Set
+`MYMACROS_LIVE_DELAY_MS` to a larger value when troubleshooting rate limits; do not lower it
+unless the API's current limits are known.
+
+On a same-repository pull request, the repository owner can comment `/run-live-tests` to run the
+**Live Tests** workflow against that PR's head commit. The workflow rejects fork PRs and reports
+its result as both a check and a PR comment. As a manual alternative, run **Live Tests** from the
+Actions tab and type `RUN` (optionally supplying a PR number and head SHA for a status update).
+Create a protected `live-tests` environment containing the `MYMACROS_TEST_USER` and
+`MYMACROS_TEST_PASSWORD` secrets before enabling it.
 
 ### Releases (maintainers only)
 

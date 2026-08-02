@@ -40,7 +40,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:live": "node scripts/require-live-test-env.mjs && vitest run tests/live.test.ts",
+    "test:live": "node scripts/require-live-test-env.mjs && vitest run tests/live.test.ts --no-file-parallelism --maxWorkers=1",
     "test:package": "bash scripts/test-package.sh",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

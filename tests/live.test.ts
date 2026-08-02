@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { MyMacrosClient } from '../src/client.js'
 import type { SessionStore } from '../src/credentials.js'
+import { createRateLimitedFetch } from './live-utils.js'
 
 const enabled = process.env.MYMACROS_LIVE_TESTS === '1'
 const user = process.env.MYMACROS_TEST_USER
 const password = process.env.MYMACROS_TEST_PASSWORD
+const delayMs = Number.parseInt(process.env.MYMACROS_LIVE_DELAY_MS ?? '500', 10)
 
 function memorySessionStore(): SessionStore {
   let session: { sessionId: string; timestamp: number } | null = null
@@ -27,7 +29,13 @@ describe.skipIf(!enabled)('live API (read-only)', () => {
 
     const client = new MyMacrosClient(
       { MYMACROS_USER: user, MYMACROS_PASSWORD: password },
-      { sessionStore: memorySessionStore() },
+      {
+        sessionStore: memorySessionStore(),
+        fetch: createRateLimitedFetch(
+          globalThis.fetch.bind(globalThis),
+          Number.isFinite(delayMs) ? Math.max(0, delayMs) : 500,
+        ),
+      },
     )
     const result = await client.getDailyMeals(todayApiDate())
 
