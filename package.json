@@ -35,16 +35,25 @@
   ],
   "scripts": {
     "build": "tsc",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:live": "node scripts/require-live-test-env.mjs && vitest run tests/live.test.ts",
+    "test:package": "bash scripts/test-package.sh",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "fixtures:generate": "node scripts/generate-fixtures.mjs",
     "fixtures:check": "node scripts/generate-fixtures.mjs --check",
-    "prepack": "npm run build"
+    "verify": "npm run fixtures:check && npm run build && npm test && npm run lint && npm run test:package",
+    "release": "release-it",
+    "release:dry": "release-it --dry-run --no-npm --no-github",
+    "release:first": "release-it --first-release",
+    "release:prep": "bash scripts/prep-release.sh",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run verify"
   },
   "dependencies": {
     "commander": "^14.0.0",
@@ -54,14 +63,19 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
+    "@release-it/keep-a-changelog": "^8.0.0",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "release-it": "^21.0.1",
     "tsx": "^4.0.0",
     "typescript": "^5.5.0",
     "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "overrides": {
     "esbuild": "0.28.1"

@@ -99,7 +99,7 @@ export class MyMacrosClient {
     }
 
     throw new Error(
-      'No valid session. Run "mymacros login" or set MYMACROS_USER and MYMACROS_PASSWORD env vars.',
+      'No valid session. Run "mymacros auth login" or set MYMACROS_USER and MYMACROS_PASSWORD env vars.',
     )
   }
 
@@ -194,7 +194,7 @@ export class MyMacrosClient {
       const pass = this.env.MYMACROS_PASSWORD
       if (!user || !pass) {
         throw new Error(
-          'Session expired. Set MYMACROS_USER and MYMACROS_PASSWORD or run "mymacros login".',
+          'Session expired. Set MYMACROS_USER and MYMACROS_PASSWORD or run "mymacros auth login".',
         )
       }
       await this.login(user, pass)

@@ -10,6 +10,11 @@ const SESSION_FILE = join(CONFIG_DIR, 'session.json')
 
 export type SessionStorage = 'keyring' | 'config'
 
+export type StoredSessionInfo = {
+  storage: SessionStorage
+  timestamp: number
+}
+
 export type SessionStore = {
   load: () => Promise<SessionData | null>
   save: (sessionId: string, storage?: SessionStorage) => Promise<SessionStorage>
@@ -52,6 +57,16 @@ function writeStoredSession(data: StoredSession): void {
   ensureConfigDir()
   writeFileSync(SESSION_FILE, JSON.stringify(data), { encoding: 'utf-8', mode: 0o600 })
   chmodSync(SESSION_FILE, 0o600)
+}
+
+/** Returns local session metadata without reading or exposing the session ID. */
+export async function getStoredSessionInfo(): Promise<StoredSessionInfo | null> {
+  const stored = readStoredSession()
+  if (!stored?.timestamp) return null
+  return {
+    storage: stored.storage ?? (stored.sessionId ? 'config' : 'keyring'),
+    timestamp: stored.timestamp,
+  }
 }
 
 /**

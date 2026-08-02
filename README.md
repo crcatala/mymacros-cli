@@ -9,6 +9,12 @@ The client is based on observed web-app behavior. See `docs/` for implementation
 ## Setup
 
 ```bash
+npm install -g mymacros-cli
+```
+
+For development:
+
+```bash
 git clone https://github.com/crcatala/mymacros-cli.git
 cd mymacros-cli
 npm ci
@@ -26,10 +32,10 @@ export MYMACROS_PASSWORD="your_password"
 Or authenticate interactively:
 
 ```bash
-npx tsx src/cli.ts login
+mymacros auth login
 ```
 
-Sessions are cached in your operating system keyring by default (macOS Keychain, Windows Credential Manager, or Linux Secret Service) and auto-refresh on expiry (~1 hour). In headless environments without a keyring, the CLI falls back to `~/.config/mymacros-cli/session.json`, protected with `0600` permissions. Use `mymacros login --use-config` to choose that fallback explicitly. Never commit credentials or session files.
+Sessions are cached in your operating system keyring by default (macOS Keychain, Windows Credential Manager, or Linux Secret Service) and auto-refresh on expiry (~1 hour). In headless environments without a keyring, the CLI falls back to `~/.config/mymacros-cli/session.json`, protected with `0600` permissions. Use `mymacros auth login --use-config` to choose that fallback explicitly. Never commit credentials or session files.
 
 ### Running
 
@@ -40,6 +46,10 @@ npx tsx src/cli.ts <command>
 # Or build and run from dist
 npm run build
 node dist/cli.js <command>
+
+# Check or clear locally stored credentials
+mymacros auth status
+mymacros auth clear
 ```
 
 ## Commands
@@ -232,7 +242,39 @@ npm test                             # Run tests
 npm run lint                         # Check with Biome
 npm run lint:fix                     # Auto-fix lint issues
 npm run fixtures:check               # Verify committed fixtures are generated
+npm run test:package                 # Smoke-test the npm tarball
+npm run verify                       # Run all public-release checks
 ```
+
+### Live tests (maintainers only)
+
+The live suite is deliberately opt-in and makes **read-only** requests with a dedicated
+GetMyMacros test account. It never uses the normal `MYMACROS_USER` credentials or persists
+a session locally. Do not point it at a personal account.
+
+```bash
+MYMACROS_LIVE_TESTS=1 \
+MYMACROS_TEST_USER=dedicated-test-user \
+MYMACROS_TEST_PASSWORD=dedicated-test-password \
+npm run test:live
+```
+
+In GitHub Actions, run the **Live Tests** workflow manually and type `RUN`. Create a protected
+`live-tests` environment containing the `MYMACROS_TEST_USER` and `MYMACROS_TEST_PASSWORD`
+secrets before enabling it.
+
+### Releases (maintainers only)
+
+Update the `[Unreleased]` section of [CHANGELOG.md](CHANGELOG.md), then use the helpers:
+
+```bash
+npm run release:prep                 # Show changes since the last tag and a changelog prompt
+npm run release:dry                  # Preview the release without publishing
+npm run release:first                # Publish the current version when no release tag exists
+npm run release                      # Verify, tag, create the GitHub release, and publish to npm
+```
+
+`npm run release` requires a clean `main` branch plus authenticated GitHub and npm CLIs.
 
 ## Not Implemented
 
