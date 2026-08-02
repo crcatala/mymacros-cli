@@ -12,6 +12,10 @@ const enabled = process.env.MYMACROS_LIVE_TESTS === '1'
 const user = process.env.MYMACROS_TEST_USER
 const password = process.env.MYMACROS_TEST_PASSWORD
 const delayMs = Number.parseInt(process.env.MYMACROS_LIVE_DELAY_MS ?? '500', 10)
+const rateLimitedFetch = createRateLimitedFetch(
+  globalThis.fetch.bind(globalThis),
+  Number.isFinite(delayMs) ? Math.max(100, delayMs) : 500,
+)
 
 /**
  * In-memory session store so each test starts without cached credentials and
@@ -32,8 +36,9 @@ function memorySessionStore(): SessionStore {
 }
 
 /**
- * Build a fresh client that logs in via env vars and serializes API requests
- * with a configurable inter-request delay.
+ * Build a fresh client that logs in via env vars. All clients share the
+ * module-level rate-limited fetch, preserving the inter-request delay across
+ * the whole live-test run.
  */
 function buildClient() {
   expect(user, 'MYMACROS_TEST_USER must be set').toBeTruthy()
@@ -43,10 +48,7 @@ function buildClient() {
     { MYMACROS_USER: user, MYMACROS_PASSWORD: password },
     {
       sessionStore: memorySessionStore(),
-      fetch: createRateLimitedFetch(
-        globalThis.fetch.bind(globalThis),
-        Number.isFinite(delayMs) ? Math.max(100, delayMs) : 500,
-      ),
+      fetch: rateLimitedFetch,
     },
   )
 }
@@ -80,7 +82,7 @@ describe.skipIf(!enabled)('live API (read-only)', () => {
     // At least one result should contain "egg" in the name
     const egg = allFoods.find((f) => f.foodName.toLowerCase().includes('egg'))
     expect(egg).toBeDefined()
-    expect(egg!.foodId).toBeTruthy()
+    expect(egg?.foodId).toBeTruthy()
   }, 30_000)
 
   it('retrieves a food item by ID', async () => {
@@ -110,13 +112,9 @@ describe.skipIf(!enabled)('live API (read-only)', () => {
     const client = buildClient()
     const categories = await client.browseCategories(5)
 
-    expect(Array.isArray(categories)).toBe(true)
-    if (categories.length > 0) {
-      expect(typeof categories[0]).toBe('string')
-      expect(categories[0].length).toBeGreaterThan(0)
-    }
-    // Menu ID 5 (breakfast) should return at least one category
-    // on any active account
+    expect(categories.length).toBeGreaterThan(0)
+    expect(typeof categories[0]).toBe('string')
+    expect(categories[0].length).toBeGreaterThan(0)
   }, 30_000)
 
   it('browses foods within a category', async () => {
@@ -124,13 +122,11 @@ describe.skipIf(!enabled)('live API (read-only)', () => {
     // "Custom & Favs" is available on every account
     const foods = await client.browseFoods(1, 'Custom & Favs', 10)
 
-    expect(Array.isArray(foods)).toBe(true)
-    if (foods.length > 0) {
-      expect(foods[0].foodId).toBeTruthy()
-      expect(foods[0].foodName).toBeTruthy()
-      expect(typeof foods[0].calories).toBe('number')
-      expect(typeof foods[0].starred).toBe('boolean')
-    }
+    expect(foods.length).toBeGreaterThan(0)
+    expect(foods[0].foodId).toBeTruthy()
+    expect(foods[0].foodName).toBeTruthy()
+    expect(typeof foods[0].calories).toBe('number')
+    expect(typeof foods[0].starred).toBe('boolean')
   }, 30_000)
 
   it('retrieves available account dates', async () => {
@@ -149,12 +145,10 @@ describe.skipIf(!enabled)('live API (read-only)', () => {
     const { api } = todayDate()
     const meals = await client.getActiveMeals(api)
 
-    expect(Array.isArray(meals)).toBe(true)
-    if (meals.length > 0) {
-      expect(meals[0].mealID).toBeTruthy()
-      expect(meals[0].mealName).toBeTruthy()
-      expect(meals[0].mealOrder).toBeTruthy()
-    }
+    expect(meals.length).toBeGreaterThan(0)
+    expect(meals[0].mealID).toBeTruthy()
+    expect(meals[0].mealName).toBeTruthy()
+    expect(meals[0].mealOrder).toBeTruthy()
   }, 30_000)
 
   it('reads daily log for a past date', async () => {
@@ -195,8 +189,10 @@ describe.skipIf(!enabled)('live API (reversible writes)', () => {
     const before = await client.getFoodItem(foodId)
     const originalStarred = before.food.starred
 
+    let starMutationAttempted = false
     try {
       // Star it
+      starMutationAttempted = true
       const starResult = await client.toggleStar(foodId, 'add')
       expect(starResult.success).toBe(true)
 
@@ -212,9 +208,11 @@ describe.skipIf(!enabled)('live API (reversible writes)', () => {
       const afterUnstar = await client.getFoodItem(foodId)
       expect(afterUnstar.food.starred).toBe(false)
     } finally {
-      // Restore the original state (idempotent guard)
-      if (originalStarred) {
-        await client.toggleStar(foodId, 'add')
+      // Restore even if an assertion or request above failed after the mutation.
+      if (starMutationAttempted) {
+        await client.toggleStar(foodId, originalStarred ? 'add' : 'remove')
+        const restored = await client.getFoodItem(foodId)
+        expect(restored.food.starred).toBe(originalStarred)
       }
     }
   }, 60_000)
