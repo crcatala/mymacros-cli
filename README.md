@@ -265,16 +265,8 @@ secrets before enabling it.
 
 ### Releases (maintainers only)
 
-Update the `[Unreleased]` section of [CHANGELOG.md](CHANGELOG.md), then use the helpers:
-
-```bash
-npm run release:prep                 # Show changes since the last tag and a changelog prompt
-npm run release:dry                  # Preview the release without publishing
-npm run release:first                # Publish the current version when no release tag exists
-npm run release                      # Verify, tag, create the GitHub release, and publish to npm
-```
-
-`npm run release` requires a clean `main` branch plus authenticated GitHub and npm CLIs.
+See [RELEASING.md](RELEASING.md) for prerequisites, initial and subsequent release procedures,
+recovery options, and post-publish verification.
 
 ## Not Implemented
 
