@@ -1,0 +1,57 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigestsToSemver"
+  ],
+  "dependencyDashboard": true,
+  "schedule": [
+    "before 5am on Monday"
+  ],
+  "platformAutomerge": true,
+  "automergeStrategy": "squash",
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "automerge": true,
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "description": "Automerge only minor/patch dev dependency updates after cooldown and CI"
+    },
+    {
+      "groupName": "TypeScript and Node typings",
+      "matchPackageNames": [
+        "typescript",
+        "@types/node"
+      ]
+    },
+    {
+      "description": "Never automerge major updates; require human review",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false
+    }
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "assignees": [
+    "@crcatala"
+  ],
+  "minimumReleaseAge": "7 days",
+  "osvVulnerabilityAlerts": true,
+  "ignoreScripts": true
+}
