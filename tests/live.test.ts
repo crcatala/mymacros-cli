@@ -24,11 +24,11 @@ const fixtureFoodId = '164298'
  * never touches the OS keyring or on-disk config files.
  */
 function memorySessionStore(): SessionStore {
-  let session: { sessionId: string; timestamp: number } | null = null
+  let session: { sessionId: string; timestamp: number; username?: string } | null = null
   return {
     load: async () => session,
-    save: async (sessionId, storage = 'keyring') => {
-      session = { sessionId, timestamp: Date.now() }
+    save: async (sessionId, storage = 'keyring', username?: string) => {
+      session = { sessionId, timestamp: Date.now(), username }
       return storage
     },
     clear: async () => {

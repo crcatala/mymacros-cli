@@ -237,4 +237,5 @@ export interface NoteParams {
 export interface SessionData {
   sessionId: string
   timestamp: number
+  username?: string
 }
