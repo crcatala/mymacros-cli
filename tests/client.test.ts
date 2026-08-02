@@ -226,6 +226,116 @@ describe('MyMacrosClient', () => {
       expect(calls[3].body).toContain('session_id=new-session')
     })
 
+    it('covers read-operation endpoint contracts and transformations', async () => {
+      const { fetchImpl, calls } = mockFetch([
+        { body: { success: true, session_id: 'sess', uname: 'user' } },
+        { body: { success: true, food_results: [{ title: 'Results', food: [] }] } },
+        {
+          body: {
+            success: true,
+            food_item: { foodID: '7', foodName: ' Egg ' },
+            meals: [{ mealID: '1', mealName: 'Lunch' }],
+          },
+        },
+        { body: { success: true, results: [' Protein ', 'Vegetables'] } },
+        { body: { success: true, food: [{ foodID: '8', foodName: ' Chicken ' }] } },
+        { body: { success: true, nutri: { all_dates: ['02-17-2026', 'bad'] } } },
+      ])
+      const client = createClient(
+        { MYMACROS_USER: 'user', MYMACROS_PASSWORD: 'pass' },
+        fetchImpl as typeof fetch,
+      )
+
+      await expect(client.searchFood('egg')).resolves.toEqual({
+        sections: [{ title: 'Results', count: 0, foods: [] }],
+      })
+      await expect(client.getFoodItem('7')).resolves.toMatchObject({
+        food: { foodId: '7', foodName: 'Egg' },
+        meals: [{ id: '1', name: 'Lunch' }],
+      })
+      await expect(client.browseCategories(5)).resolves.toEqual(['Protein', 'Vegetables'])
+      await expect(client.browseFoods(5, 'Chicken', 1)).resolves.toMatchObject([
+        { foodId: '8', foodName: 'Chicken' },
+      ])
+      await expect(client.getDates()).resolves.toEqual(['2026-02-17', 'bad'])
+      expect(calls.map((call) => call.url)).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('FoodSearch.php'),
+          expect.stringContaining('GetFoodItem.php'),
+          expect.stringContaining('FoodCategoryFetch.php'),
+          expect.stringContaining('DM.php'),
+        ]),
+      )
+      expect(calls[4].body).toContain('cat_name=Chicken')
+    })
+
+    it('covers write-operation endpoint contracts', async () => {
+      const { fetchImpl, calls } = mockFetch([
+        { body: { success: true, session_id: 'sess', uname: 'user' } },
+        ...Array.from({ length: 8 }, () => ({ body: { success: true } })),
+      ])
+      const client = createClient(
+        { MYMACROS_USER: 'user', MYMACROS_PASSWORD: 'pass' },
+        fetchImpl as typeof fetch,
+      )
+      await client.addFood({
+        mealId: '1',
+        mealOrder: '1',
+        mealName: 'Lunch',
+        foodUserId: '-1',
+        foodId: '7',
+        servingSize: 2,
+        servingName: 'Serving',
+        date: '02-17-2026',
+      })
+      await client.addQuickFood({
+        mealId: '1',
+        mealOrder: '1',
+        mealName: 'Lunch',
+        name: 'Quick',
+        calories: 100,
+        protein: 10,
+        carbs: 5,
+        fat: 2,
+        date: '02-17-2026',
+      })
+      await client.removeFood({ uniqueId: 'u', foodId: '7', mealName: 'Lunch', date: '02-17-2026' })
+      await client.updateFood({
+        foodId: '7',
+        preUniqueId: 'u',
+        preMealName: 'Lunch',
+        preServingName: 'Serving',
+        newMealName: 'Dinner',
+        newServingSize: 3,
+        date: '02-17-2026',
+      })
+      await client.copyMeal({
+        fromDate: '02-17-2026',
+        toDate: '02-18-2026',
+        fromMealName: 'Lunch',
+        newMealId: '2',
+        newMealOrder: '2',
+        newMealName: 'Dinner',
+        copiedUniqueIds: ['u'],
+      })
+      await client.deleteMeal('Lunch', '02-17-2026')
+      await client.saveNote({ mealName: '--1', note: 'note', date: '02-17-2026' })
+      await client.toggleStar('7', 'add')
+      expect(calls.slice(1).map((call) => call.url)).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('SaveFood.php'),
+          expect.stringContaining('RemoveFromMeal.php'),
+          expect.stringContaining('UpdateFoodLog.php'),
+          expect.stringContaining('CopyMeal.php'),
+          expect.stringContaining('DeleteMeal.php'),
+          expect.stringContaining('notes.php'),
+          expect.stringContaining('alternateStarred.php'),
+        ]),
+      )
+      expect(calls[2].body).toContain('fast_track=true')
+      expect(calls[5].body).toContain('copied_unique_ids=%5B%22u%22%5D')
+    })
+
     it('returns active meal IDs and order for write commands', async () => {
       const { fetchImpl } = mockFetch([
         { body: { success: true, session_id: 'sess', uname: 'user' } },

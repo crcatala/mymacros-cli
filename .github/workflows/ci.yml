@@ -25,6 +25,6 @@ jobs:
       - run: npm ci
       - run: npm run fixtures:check
       - run: npm run build
-      - run: npm test
+      - run: npm run test:coverage
       - run: npm run lint
       - run: npm run test:package

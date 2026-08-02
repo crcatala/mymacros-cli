@@ -292,6 +292,10 @@ MYMACROS_TEST_PASSWORD=dedicated-test-password \
 npm run test:live
 ```
 
+Live requests are serialized and paced at **500 ms** by default (including login). Set
+`MYMACROS_LIVE_DELAY_MS` to a larger value when troubleshooting rate limits; do not lower it
+unless the API's current limits are known.
+
 In GitHub Actions, run the **Live Tests** workflow manually and type `RUN`. Create a protected
 `live-tests` environment containing the `MYMACROS_TEST_USER` and `MYMACROS_TEST_PASSWORD`
 secrets before enabling it.
