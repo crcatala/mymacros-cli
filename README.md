@@ -67,6 +67,12 @@ mymacros auth login
 
 Sessions are cached in your operating system keyring by default (macOS Keychain, Windows Credential Manager, or Linux Secret Service) and auto-refresh on expiry (~1 hour). In headless environments without a keyring, the CLI falls back to `~/.config/mymacros-cli/session.json`, protected with `0600` permissions. Use `mymacros auth login --use-config` to choose that fallback explicitly. Never commit credentials or session files.
 
+## Web access and account eligibility
+
+This CLI interoperates with the undocumented endpoints used by the GetMyMacros web app. GetMyMacros currently states that web access is limited to Pro and Macro Coach subscribers. A mobile-only account may still authenticate and use some endpoints, but food-log writes can be rejected by the server (observed response: `{ "success": false, "paid": false }`).
+
+For reliable food logging through this CLI, use an account entitled to access the web app. Endpoint availability and entitlement rules are controlled by GetMyMacros and may change without notice.
+
 ## Running
 
 ```bash
