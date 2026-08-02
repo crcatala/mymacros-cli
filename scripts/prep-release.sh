@@ -27,7 +27,7 @@ Exclude internal tests, CI, and routine dependency updates unless users are affe
 === Full commit messages ===
 EOF
 
-git log "$range" --format='## %s%n%n%b%n---' --no-merges
+git log "$range" --format='## %s%n%n%b%n---' --no-merges | sed '/^Co-authored-by:/Id' | cat -s
 
 echo -e '\n=== Changed files ==='
 if [[ -n "$last_tag" ]]; then
