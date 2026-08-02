@@ -16,11 +16,9 @@ consumer="$tmpdir/consumer"
 npm install --omit=dev --prefix "$consumer" "$(pwd)/$archive" >/dev/null
 
 "$consumer/node_modules/.bin/mymacros" --help >/dev/null
-# keytar is loaded lazily by the CLI; import it directly to verify its native binding.
-(
-  cd "$consumer"
-  node --input-type=module -e "const keytar = (await import('keytar')).default; if (typeof keytar?.getPassword !== 'function') process.exit(1)"
-)
+# keytar is native; verify its install script supplied the binding. Do not load it here:
+# Linux CI deliberately lacks libsecret, and the CLI falls back when no keyring is available.
+test -f "$consumer/node_modules/keytar/build/Release/keytar.node"
 node -e '
   const pkg = require(process.argv[1]);
   if (!pkg.bin?.mymacros || !pkg.files?.includes("dist")) process.exit(1)
