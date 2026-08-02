@@ -1,0 +1,68 @@
+{
+  "name": "mymacros-cli",
+  "version": "0.1.0",
+  "description": "Unofficial CLI client for GetMyMacros, optimized for AI agent use",
+  "license": "MIT",
+  "author": "Christian Catalan <crcatala@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crcatala/mymacros-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/crcatala/mymacros-cli/issues"
+  },
+  "homepage": "https://github.com/crcatala/mymacros-cli#readme",
+  "packageManager": "npm@11.16.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "mymacros": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "getmymacros",
+    "nutrition",
+    "food-tracking",
+    "cli",
+    "ai-agent"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "fixtures:generate": "node scripts/generate-fixtures.mjs",
+    "fixtures:check": "node scripts/generate-fixtures.mjs --check",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "keytar": "^7.9.0",
+    "kleur": "^4.1.5",
+    "ora": "^9.4.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^4.1.10",
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "overrides": {
+    "esbuild": "0.28.1"
+  }
+}

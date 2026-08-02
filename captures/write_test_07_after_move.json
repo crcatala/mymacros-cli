@@ -1,0 +1,83 @@
+{
+  "success": true,
+  "paid": false,
+  "active_meals": [
+    {
+      "mealID": "0",
+      "mealName": "Breakfast",
+      "mealOrder": "0",
+      "foodLogs": []
+    },
+    {
+      "mealID": "1",
+      "mealName": "Lunch",
+      "mealOrder": "1",
+      "foodLogs": []
+    },
+    {
+      "mealID": "2",
+      "mealName": "Dinner",
+      "mealOrder": "2",
+      "foodLogs": []
+    }
+  ],
+  "active_goals": [],
+  "nutri": {
+    "body_weight": [],
+    "success": true,
+    "current_date": "01-15-2024",
+    "content": {
+      "Breakfast": [
+        {
+          "food_id": "10001",
+          "uniqueID": "20001",
+          "meal_name": "Breakfast",
+          "food_name": "Example Oat Bowl",
+          "serving_name": "serving",
+          "serving_size": "1",
+          "calories": "120",
+          "total_fat": "4",
+          "carbs": "6",
+          "protein": "18",
+          "saturated_fat": "1",
+          "mono_fat": "1.5",
+          "poly_fat": "0.5",
+          "cholesterol": "25",
+          "fiber": "2",
+          "sugar": "2",
+          "sodium": "340"
+        }
+      ],
+      "Lunch": [
+        {
+          "food_id": "10016",
+          "uniqueID": "20016",
+          "meal_name": "Lunch",
+          "food_name": "Example Lunch Bowl",
+          "serving_name": "serving",
+          "serving_size": "1",
+          "calories": "120",
+          "total_fat": "4",
+          "carbs": "6",
+          "protein": "18",
+          "saturated_fat": "1",
+          "mono_fat": "1.5",
+          "poly_fat": "0.5",
+          "cholesterol": "25",
+          "fiber": "2",
+          "sugar": "2",
+          "sodium": "340"
+        }
+      ]
+    },
+    "meal_order": [
+      "Breakfast",
+      "Lunch"
+    ],
+    "all_dates": [
+      "01-15-2024"
+    ],
+    "nutri_goals": []
+  },
+  "notes": []
+}

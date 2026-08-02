@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "food_item": {
+    "calories": "120",
+    "protein": "18",
+    "totalFat": "4",
+    "satFat": "1",
+    "monoFat": "1.5",
+    "polyFat": "0.5",
+    "cholesterol": "25",
+    "sodium": "340",
+    "carbs": "6",
+    "fiber": "2",
+    "sugar": "2",
+    "verified": true,
+    "userID": "-1",
+    "foodID": "10014",
+    "foodName": "Example Food Item",
+    "servingName": "serving",
+    "servingSize": "1",
+    "foodType": "Protein",
+    "brand": "Example Foods",
+    "starred": false,
+    "occurenceCount": 0
+  },
+  "your_food": false,
+  "paid": false,
+  "meals": [
+    {
+      "mealID": "0",
+      "mealName": "Breakfast",
+      "mealOrder": "0",
+      "foodLogs": []
+    },
+    {
+      "mealID": "1",
+      "mealName": "Lunch",
+      "mealOrder": "1",
+      "foodLogs": []
+    },
+    {
+      "mealID": "2",
+      "mealName": "Dinner",
+      "mealOrder": "2",
+      "foodLogs": []
+    }
+  ],
+  "selected_meal_id": "0"
+}

@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "food": [
+    {
+      "calories": "120",
+      "protein": "18",
+      "totalFat": "4",
+      "satFat": "1",
+      "monoFat": "1.5",
+      "polyFat": "0.5",
+      "cholesterol": "25",
+      "sodium": "340",
+      "carbs": "6",
+      "fiber": "2",
+      "sugar": "2",
+      "verified": true,
+      "userID": "424242",
+      "foodID": "-10004",
+      "foodName": "Example Custom Smoothie",
+      "servingName": "serving",
+      "servingSize": "1",
+      "foodType": "Protein",
+      "brand": "Example Foods",
+      "starred": true,
+      "occurenceCount": 0
+    }
+  ]
+}

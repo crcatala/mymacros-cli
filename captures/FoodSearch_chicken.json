@@ -1,0 +1,61 @@
+{
+  "success": true,
+  "food_results": [
+    {
+      "title": "Custom & Favs",
+      "food": [
+        {
+          "calories": "120",
+          "protein": "18",
+          "totalFat": "4",
+          "satFat": "1",
+          "monoFat": "1.5",
+          "polyFat": "0.5",
+          "cholesterol": "25",
+          "sodium": "340",
+          "carbs": "6",
+          "fiber": "2",
+          "sugar": "2",
+          "verified": true,
+          "userID": "424242",
+          "foodID": "-10012",
+          "foodName": "Example Custom Chicken Soup",
+          "servingName": "serving",
+          "servingSize": "1",
+          "foodType": "Chicken",
+          "brand": "Example Foods",
+          "starred": true,
+          "occurenceCount": 0
+        }
+      ]
+    },
+    {
+      "title": "Results",
+      "food": [
+        {
+          "calories": "120",
+          "protein": "18",
+          "totalFat": "4",
+          "satFat": "1",
+          "monoFat": "1.5",
+          "polyFat": "0.5",
+          "cholesterol": "25",
+          "sodium": "340",
+          "carbs": "6",
+          "fiber": "2",
+          "sugar": "2",
+          "verified": true,
+          "userID": "-1",
+          "foodID": "10013",
+          "foodName": "Example Chicken Bowl",
+          "servingName": "serving",
+          "servingSize": "1",
+          "foodType": "Chicken",
+          "brand": "Example Foods",
+          "starred": false,
+          "occurenceCount": 0
+        }
+      ]
+    }
+  ]
+}

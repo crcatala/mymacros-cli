@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "settings": {
+    "user": {
+      "userID": "424242",
+      "username": "example_user",
+      "email": "example@example.invalid",
+      "firstName": "Example",
+      "lastName": "User",
+      "gender": "X"
+    },
+    "active_meals": [
+      {
+        "mealID": "0",
+        "mealName": "Breakfast",
+        "mealOrder": "0",
+        "foodLogs": []
+      },
+      {
+        "mealID": "1",
+        "mealName": "Lunch",
+        "mealOrder": "1",
+        "foodLogs": []
+      },
+      {
+        "mealID": "2",
+        "mealName": "Dinner",
+        "mealOrder": "2",
+        "foodLogs": []
+      }
+    ],
+    "subscription": {
+      "duration": "none",
+      "expiration": "",
+      "sub_id": null,
+      "cancelled": "0",
+      "title": ""
+    },
+    "active_goals": []
+  }
+}

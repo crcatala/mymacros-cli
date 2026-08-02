@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "reason": "Login successful",
+  "is_coach": false,
+  "session_id": "synthetic-session-id-not-valid",
+  "email": "example@example.invalid",
+  "fname": "Example",
+  "uname": "example_user",
+  "profile": {
+    "fname": "Example",
+    "lname": "User",
+    "uname": "example_user",
+    "email": "example@example.invalid"
+  }
+}
