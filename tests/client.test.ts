@@ -321,19 +321,77 @@ describe('MyMacrosClient', () => {
       await client.deleteMeal('Lunch', '02-17-2026')
       await client.saveNote({ mealName: '--1', note: 'note', date: '02-17-2026' })
       await client.toggleStar('7', 'add')
-      expect(calls.slice(1).map((call) => call.url)).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining('SaveFood.php'),
-          expect.stringContaining('RemoveFromMeal.php'),
-          expect.stringContaining('UpdateFoodLog.php'),
-          expect.stringContaining('CopyMeal.php'),
-          expect.stringContaining('DeleteMeal.php'),
-          expect.stringContaining('notes.php'),
-          expect.stringContaining('alternateStarred.php'),
-        ]),
-      )
-      expect(calls[2].body).toContain('fast_track=true')
-      expect(calls[5].body).toContain('copied_unique_ids=%5B%22u%22%5D')
+      expect(calls.slice(1).map((call) => new URL(call.url).pathname)).toEqual([
+        '/assets/script/Tracking/Food/SaveFood.php',
+        '/assets/script/Tracking/Food/SaveFood.php',
+        '/assets/script/Tracking/Food/RemoveFromMeal.php',
+        '/assets/script/Tracking/Food/UpdateFoodLog.php',
+        '/assets/script/Tracking/Food/CopyMeal.php',
+        '/assets/script/Tracking/Food/DeleteMeal.php',
+        '/assets/script/notes.php',
+        '/assets/script/Tracking/Food/alternateStarred.php',
+      ])
+      expect(
+        calls.slice(1).map((call) => Object.fromEntries(new URLSearchParams(call.body))),
+      ).toEqual([
+        {
+          meal_id: '1',
+          meal_order: '1',
+          meal_name: 'Lunch',
+          food_user_id: '-1',
+          food_id: '7',
+          serving_size: '2',
+          serving_name: 'Serving',
+          date: '02-17-2026',
+          session_id: 'sess',
+        },
+        {
+          meal_id: '1',
+          meal_order: '1',
+          meal_name: 'Lunch',
+          fast_track: 'true',
+          food_id: '0',
+          food_name: 'Quick',
+          calories: '100',
+          total_protein: '10',
+          total_carbs: '5',
+          total_fat: '2',
+          serving_size: '1',
+          serving_name: 'Serving',
+          date: '02-17-2026',
+          session_id: 'sess',
+        },
+        {
+          date: '02-17-2026',
+          meal_name: 'Lunch',
+          food_id: '7',
+          unique_id: 'u',
+          session_id: 'sess',
+        },
+        {
+          date: '02-17-2026',
+          food_id: '7',
+          pre_meal_name: 'Lunch',
+          pre_serving_name: 'Serving',
+          pre_unique_id: 'u',
+          new_meal_name: 'Dinner',
+          new_serving_size: '3',
+          session_id: 'sess',
+        },
+        {
+          from_date: '02-17-2026',
+          to_date: '02-18-2026',
+          from_meal_name: 'Lunch',
+          new_meal_id: '2',
+          new_meal_order: '2',
+          new_meal_name: 'Dinner',
+          copied_unique_ids: '["u"]',
+          session_id: 'sess',
+        },
+        { meal: 'Lunch', date: '02-17-2026', session_id: 'sess' },
+        { meal_name: '--1', note: 'note', date: '02-17-2026', session_id: 'sess' },
+        { food_id: '7', action: 'add', session_id: 'sess' },
+      ])
     })
 
     it('returns active meal IDs and order for write commands', async () => {

@@ -3,6 +3,9 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+const keytar = vi.hoisted(() => ({ deletePassword: vi.fn() }))
+vi.mock('keytar', () => ({ default: keytar }))
+
 const tempDirs: string[] = []
 
 async function loadCredentials() {
@@ -15,6 +18,8 @@ async function loadCredentials() {
 
 afterEach(() => {
   vi.unstubAllEnvs()
+  vi.useRealTimers()
+  keytar.deletePassword.mockReset()
   for (const dir of tempDirs.splice(0)) rmSync(dir, { recursive: true, force: true })
 })
 
@@ -22,7 +27,9 @@ describe('config-backed session storage', () => {
   it('stores, reports, loads, and clears a protected config session', async () => {
     const { dir, saveStoredSession, getStoredSessionInfo, loadStoredSession, clearStoredSession } =
       await loadCredentials()
+    keytar.deletePassword.mockResolvedValue(false)
     await expect(saveStoredSession('session-id', 'config')).resolves.toBe('config')
+    expect(keytar.deletePassword).toHaveBeenCalledWith('mymacros-cli', 'session')
 
     const file = join(dir, 'mymacros-cli', 'session.json')
     expect(JSON.parse(readFileSync(file, 'utf8'))).toMatchObject({
@@ -49,8 +56,11 @@ describe('config-backed session storage', () => {
       isSessionFresh,
       SESSION_MAX_AGE_MS,
     } = await loadCredentials()
+    keytar.deletePassword.mockResolvedValue(false)
     await saveStoredSession('session-id', 'config')
     const file = join(dir, 'mymacros-cli', 'session.json')
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-02-17T12:00:00.000Z'))
     expect(isSessionFresh(Date.now() - SESSION_MAX_AGE_MS - 1)).toBe(false)
     expect(isSessionFresh(Date.now() - SESSION_MAX_AGE_MS)).toBe(true)
 
