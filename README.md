@@ -245,4 +245,4 @@ These features are out of scope for this CLI:
 
 ## Contributing and security
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). This project is available under the [MIT License](LICENSE).
+See [CONTRIBUTING.md](CONTRIBUTING.md). This project is available under the [MIT License](LICENSE).
