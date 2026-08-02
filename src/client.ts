@@ -1,4 +1,9 @@
-import { defaultSessionStore, type SessionStorage, type SessionStore } from './credentials.js'
+import {
+  defaultSessionStore,
+  isSessionFresh,
+  type SessionStorage,
+  type SessionStore,
+} from './credentials.js'
 import type {
   AddFoodParams,
   ApiFoodItem,
@@ -26,7 +31,6 @@ import type {
 
 const BASE_URL = 'https://getmymacros.com/assets/script'
 // Session considered stale after 50 minutes (server expires ~1 hour)
-const SESSION_MAX_AGE_MS = 50 * 60 * 1000
 
 export type ClientOptions = {
   fetch?: typeof fetch
@@ -108,7 +112,7 @@ export class MyMacrosClient {
     if (!data) return null
 
     const age = Date.now() - data.timestamp
-    if (age > SESSION_MAX_AGE_MS) {
+    if (!isSessionFresh(data.timestamp)) {
       this.debug('Cached session expired (age: %dmin)', Math.round(age / 60000))
       return null
     }

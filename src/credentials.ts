@@ -10,9 +10,16 @@ const SESSION_FILE = join(CONFIG_DIR, 'session.json')
 
 export type SessionStorage = 'keyring' | 'config'
 
+export const SESSION_MAX_AGE_MS = 50 * 60 * 1000
+
 export type StoredSessionInfo = {
   storage: SessionStorage
   timestamp: number
+  sessionFresh: boolean
+}
+
+export function isSessionFresh(timestamp: number): boolean {
+  return Date.now() - timestamp <= SESSION_MAX_AGE_MS
 }
 
 export type SessionStore = {
@@ -66,6 +73,7 @@ export async function getStoredSessionInfo(): Promise<StoredSessionInfo | null> 
   return {
     storage: stored.storage ?? (stored.sessionId ? 'config' : 'keyring'),
     timestamp: stored.timestamp,
+    sessionFresh: isSessionFresh(stored.timestamp),
   }
 }
 
@@ -118,19 +126,28 @@ export async function saveStoredSession(
   }
 }
 
-/** Remove both the session metadata and any keyring entry. */
+/** Remove local session metadata and the matching keyring entry. */
 export async function clearStoredSession(): Promise<void> {
+  const stored = readStoredSession()
+
   try {
     if (existsSync(SESSION_FILE)) unlinkSync(SESSION_FILE)
-  } catch {
-    // Non-fatal: a stale timestamp is harmless without a valid keyring session.
+  } catch (error) {
+    throw new Error(`Unable to remove the local session file: ${errorMessage(error)}`)
   }
+
+  // No metadata means no session created by this CLI; config sessions are self-contained.
+  if (!stored || stored.storage === 'config' || (!stored.storage && stored.sessionId)) return
 
   try {
     await (await getKeytar()).deletePassword(SERVICE_NAME, ACCOUNT_NAME)
-  } catch {
-    // The keyring may be unavailable, or no credential may exist.
+  } catch (error) {
+    throw new Error(`Unable to remove the system-keyring session: ${errorMessage(error)}`)
   }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
 }
 
 export const defaultSessionStore: SessionStore = {

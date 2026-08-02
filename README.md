@@ -50,6 +50,9 @@ node dist/cli.js <command>
 # Check or clear locally stored credentials
 mymacros auth status
 mymacros auth clear
+
+# JSON status distinguishes whether credentials exist from whether the cached session is fresh
+mymacros auth status --json
 ```
 
 ## Commands

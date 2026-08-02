@@ -7,6 +7,25 @@ import { clearStoredSession, getStoredSessionInfo } from '../credentials.js'
 
 type LoginOptions = { useConfig?: boolean }
 
+type CredentialSource = 'environment' | 'keyring' | 'config'
+
+function credentialStatusMessage(
+  source: CredentialSource | undefined,
+  configured: boolean,
+  sessionFresh: boolean | null,
+): string {
+  if (!configured) return 'No credentials are configured locally.'
+  if (source === 'environment') {
+    return 'Credentials are configured through environment variables. Cached session freshness is not applicable.'
+  }
+
+  const location = source === 'keyring' ? 'the system keyring' : 'a protected config file'
+  const freshness = sessionFresh
+    ? 'fresh and usable without logging in again'
+    : 'expired and will require logging in again'
+  return `Credentials are configured in ${location}. The cached session is ${freshness}.`
+}
+
 async function login(ctx: CliContext, opts: LoginOptions): Promise<void> {
   const env = process.env
   let username = env.MYMACROS_USER
@@ -79,11 +98,13 @@ export function registerAuthCommands(program: Command, ctx: CliContext): void {
     .action(async () => {
       const info = await getStoredSessionInfo()
       const usesEnv = Boolean(process.env.MYMACROS_USER && process.env.MYMACROS_PASSWORD)
-      const source = usesEnv ? 'environment' : info?.storage
+      const source: CredentialSource | undefined = usesEnv ? 'environment' : info?.storage
       const configured = Boolean(source)
+      const sessionFresh = usesEnv ? null : (info?.sessionFresh ?? null)
+      const message = credentialStatusMessage(source, configured, sessionFresh)
 
       if (ctx.output.format === 'json') {
-        output(ctx, { configured, source: source ?? null })
+        output(ctx, { configured, sessionFresh, source: source ?? null, message })
         if (!configured) process.exitCode = 1
         return
       }
@@ -91,33 +112,33 @@ export function registerAuthCommands(program: Command, ctx: CliContext): void {
       if (!configured) {
         logError(
           ctx,
-          'No credentials configured. Run "mymacros auth login" or set MYMACROS_USER and MYMACROS_PASSWORD.',
+          `${message} Run "mymacros auth login" or set MYMACROS_USER and MYMACROS_PASSWORD.`,
         )
         process.exitCode = 1
         return
       }
 
-      const location =
-        source === 'environment'
-          ? 'environment variables'
-          : source === 'keyring'
-            ? 'the system keyring'
-            : 'a protected config file'
-      logSuccess(ctx, `Credentials are configured in ${location}.`)
+      logSuccess(ctx, message)
     })
 
   auth
     .command('clear')
     .description('Remove the locally stored session (environment variables are unchanged)')
     .action(async () => {
-      await clearStoredSession()
-      if (ctx.output.format === 'json') {
-        output(ctx, { success: true })
-      } else {
-        logSuccess(ctx, 'Locally stored session cleared.')
-        if (process.env.MYMACROS_USER || process.env.MYMACROS_PASSWORD) {
-          logWarning(ctx, 'MYMACROS_USER or MYMACROS_PASSWORD is still set in the environment.')
+      try {
+        await clearStoredSession()
+        if (ctx.output.format === 'json') {
+          output(ctx, { success: true })
+        } else {
+          logSuccess(ctx, 'Locally stored session cleared.')
+          if (process.env.MYMACROS_USER || process.env.MYMACROS_PASSWORD) {
+            logWarning(ctx, 'MYMACROS_USER or MYMACROS_PASSWORD is still set in the environment.')
+          }
         }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        logError(ctx, message)
+        process.exitCode = 1
       }
     })
 

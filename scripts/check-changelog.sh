@@ -3,9 +3,9 @@
 set -euo pipefail
 
 content=$(awk '/^## \[Unreleased\]/{found=1; next} /^## \[/{exit} found{print}' CHANGELOG.md)
-if ! grep -q '^### ' <<<"$content"; then
-  echo 'Error: CHANGELOG.md has no entries in its [Unreleased] section.' >&2
-  echo 'Add a Keep a Changelog section such as "### Added" before releasing.' >&2
+if ! awk '/^### /{section=1; next} section && /^[-*+] /{found=1} END{exit !found}' <<<"$content"; then
+  echo 'Error: CHANGELOG.md has no unreleased user-facing entries.' >&2
+  echo 'Add a Keep a Changelog section with at least one item, such as "### Added" followed by "- New feature".' >&2
   exit 1
 fi
 

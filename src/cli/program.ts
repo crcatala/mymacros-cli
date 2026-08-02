@@ -1,4 +1,5 @@
 import { Command, CommanderError } from 'commander'
+import packageJson from '../../package.json' with { type: 'json' }
 import { registerAddCommand } from '../commands/add.js'
 import { registerBrowseCommand } from '../commands/browse.js'
 import { registerCopyMealCommand } from '../commands/copy-meal.js'
@@ -16,7 +17,7 @@ import type { CliContext } from './context.js'
 import { configureStyledHelp } from './help.js'
 import { addOutputOptions } from './options.js'
 
-const VERSION = '0.1.0'
+const VERSION = packageJson.version
 
 export function createProgram(ctx: CliContext): Command {
   const program = new Command()
