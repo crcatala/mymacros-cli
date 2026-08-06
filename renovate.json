@@ -5,31 +5,43 @@
   "schedule": ["before 5am on Monday"],
   "platformAutomerge": true,
   "automergeStrategy": "squash",
+  "labels": ["dependencies"],
+  "assignees": ["@crcatala"],
+  "minimumReleaseAge": "7 days",
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "ignoreScripts": true,
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
+      "description": "Automerge stable (non-0.x) minor/patch updates",
       "matchUpdateTypes": ["minor", "patch"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
     },
     {
+      "description": "Automerge minor/patch dev dependency updates (build tooling; CI validates)",
       "matchDepTypes": ["devDependencies"],
-      "automerge": true,
       "matchUpdateTypes": ["minor", "patch"],
-      "description": "Automerge only minor/patch dev dependency updates after cooldown and CI"
+      "automerge": true
     },
     {
-      "groupName": "TypeScript and Node typings",
-      "matchPackageNames": ["typescript", "@types/node"]
+      "description": "TypeScript - can introduce breaking type checks; review manually",
+      "matchPackageNames": ["typescript"],
+      "automerge": false,
+      "groupName": null
+    },
+    {
+      "description": "Group type definitions into a single PR",
+      "matchPackagePatterns": ["^@types/"],
+      "groupName": "type definitions"
     },
     {
       "description": "Never automerge major updates; require human review",
       "matchUpdateTypes": ["major"],
       "automerge": false
     }
-  ],
-  "labels": ["dependencies"],
-  "assignees": ["@crcatala"],
-  "minimumReleaseAge": "7 days",
-  "osvVulnerabilityAlerts": true,
-  "ignoreScripts": true
+  ]
 }
