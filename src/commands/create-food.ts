@@ -41,6 +41,7 @@ export function registerCreateFoodCommand(program: Command, ctx: CliContext): vo
     .action(async (opts: Record<string, string>) => {
       try {
         const servingSize = numberOption(opts.servingSize, 'serving-size') as number
+        if (servingSize <= 0) throw new Error('Invalid --serving-size. Must be a positive number.')
         const data = {
           name: opts.name.trim(),
           servingSize,

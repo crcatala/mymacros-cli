@@ -37,3 +37,7 @@ Implemented the first pass: fast-track now sends protein/carbs field names used 
 **2026-08-15T16:15:54Z**
 
 Implementation committed on fix/custom-food-cli and PR opened: https://github.com/crcatala/mymacros-cli/pull/28
+
+**2026-08-15T16:36:30Z**
+
+Addressed review follow-ups: corrected opted-in live category contract, required positive serving size with CLI integration coverage, updated fast-track inventory docs, and corrected historical fast-track persistence findings. Tests: 84 passed, 10 skipped; build passed.

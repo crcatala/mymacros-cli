@@ -18,6 +18,8 @@ const client = vi.hoisted(() => ({
   deleteMeal: vi.fn(),
   saveNote: vi.fn(),
   toggleStar: vi.fn(),
+  createCustomFood: vi.fn(),
+  deleteCustomFood: vi.fn(),
   login: vi.fn(),
 }))
 
@@ -98,6 +100,8 @@ function resetClient() {
     'deleteMeal',
     'saveNote',
     'toggleStar',
+    'createCustomFood',
+    'deleteCustomFood',
   ] as const)
     client[method].mockResolvedValue({ success: true })
 }
@@ -147,6 +151,36 @@ describe('CLI commands with a mocked client', () => {
       JSON.parse(
         (
           await run([
+            'create-food',
+            '--name',
+            'Custom Yogurt',
+            '--serving-size',
+            '1',
+            '--serving-name',
+            'cup',
+            '--brand',
+            'Test Brand',
+            '--cal',
+            '70',
+            '--fat',
+            '1.5',
+            '--carbs',
+            '6',
+            '--protein',
+            '13',
+          ])
+        ).out,
+      ).success,
+    ).toBe(true)
+    expect(JSON.parse((await run(['delete-food', '-123'])).out).foodId).toBe('-123')
+    expect(client.createCustomFood).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Custom Yogurt', servingSize: 1, carbs: 6, protein: 13 }),
+    )
+    expect(client.deleteCustomFood).toHaveBeenCalledWith({ foodId: '-123' })
+    expect(
+      JSON.parse(
+        (
+          await run([
             'add-quick',
             '--name',
             'Shake',
@@ -192,6 +226,27 @@ describe('CLI commands with a mocked client', () => {
       expect.objectContaining({ copiedUniqueIds: ['entry-1'], toDate: '02-18-2026' }),
     )
     expect(client.toggleStar).toHaveBeenLastCalledWith('42', 'remove')
+  })
+
+  it('rejects a zero custom-food serving size before calling the API', async () => {
+    const result = await run([
+      'create-food',
+      '--name',
+      'Invalid Food',
+      '--serving-size',
+      '0',
+      '--cal',
+      '1',
+      '--fat',
+      '0',
+      '--carbs',
+      '0',
+      '--protein',
+      '0',
+    ])
+    expect(result.exitCode).toBe(1)
+    expect(result.err).toContain('serving-size')
+    expect(client.createCustomFood).not.toHaveBeenCalled()
   })
 
   it.each([
