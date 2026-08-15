@@ -115,8 +115,8 @@ describe.skipIf(!enabled)('live API (read-only)', () => {
 
   it('browses foods within a category', async () => {
     const client = buildClient()
-    // "Custom & Favs" is available on every account
-    const foods = await client.browseFoods(1, 'Custom & Favs', 10)
+    // "Custom & Favorites" is available on every account
+    const foods = await client.browseFoods(1, 'Custom & Favorites', 10)
 
     const fixtureFood = foods.find((food) => food.foodId === fixtureFoodId)
     expect(fixtureFood).toBeDefined()

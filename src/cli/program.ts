@@ -3,8 +3,10 @@ import packageJson from '../../package.json' with { type: 'json' }
 import { registerAddCommand } from '../commands/add.js'
 import { registerBrowseCommand } from '../commands/browse.js'
 import { registerCopyMealCommand } from '../commands/copy-meal.js'
+import { registerCreateFoodCommand } from '../commands/create-food.js'
 import { registerDailyCommand } from '../commands/daily.js'
 import { registerDatesCommand } from '../commands/dates.js'
+import { registerDeleteFoodCommand } from '../commands/delete-food.js'
 import { registerDeleteMealCommand } from '../commands/delete-meal.js'
 import { registerFoodCommand } from '../commands/food.js'
 import { registerAuthCommands } from '../commands/login.js'
@@ -57,6 +59,7 @@ ${ex('mymacros browse types Chicken', 'Browse foods in a category')}
 ${ctx.colors.section('Examples — Tracking')}
 ${ex('mymacros add 164298 --meal Breakfast --serving 2', 'Add a food to a meal')}
 ${ex('mymacros add-quick --name "Protein shake" --cal 200 --protein 30 --carbs 10 --fat 3', 'Quick-add by macros')}
+${ex('mymacros create-food --name "Custom yogurt" --serving-name cup --cal 70 --protein 13 --carbs 6 --fat 1.5', 'Create a persistent custom food')}
 ${ex('mymacros update 668 --serving 3', 'Change serving size (uniqueId from daily output)')}
 ${ex('mymacros update 668 --meal Lunch', 'Move a food to another meal')}
 ${ex('mymacros remove 668', 'Remove a food entry')}
@@ -69,6 +72,7 @@ ${ex('mymacros note "Felt great today"', 'Add a day note')}
 ${ex('mymacros note "Light meal" --meal Breakfast', 'Add a meal note')}
 ${ex('mymacros star 164298', 'Add food to favorites')}
 ${ex('mymacros unstar 164298', 'Remove food from favorites')}
+${ex('mymacros delete-food -2288', 'Delete a custom food definition')}
 ${ex('mymacros dates --limit 10', 'List recent dates with logged data')}
 
 ${ctx.colors.section('Output Modes')}
@@ -108,9 +112,11 @@ ${ctx.colors.section('Agent Usage Notes')}
   registerBrowseCommand(program, ctx)
   registerDatesCommand(program, ctx)
   registerAddCommand(program, ctx)
+  registerCreateFoodCommand(program, ctx)
   registerRemoveCommand(program, ctx)
   registerUpdateCommand(program, ctx)
   registerCopyMealCommand(program, ctx)
+  registerDeleteFoodCommand(program, ctx)
   registerDeleteMealCommand(program, ctx)
   registerNoteCommand(program, ctx)
   registerStarCommands(program, ctx)

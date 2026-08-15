@@ -12,7 +12,9 @@ import type {
   ApiResponse,
   BrowseCategoryApiResponse,
   CopyMealParams,
+  CreateCustomFoodParams,
   DailyMealsApiResponse,
+  DeleteCustomFoodParams,
   FoodSearchApiResponse,
   GetFoodItemApiResponse,
   LoginResponse,
@@ -314,13 +316,40 @@ export class MyMacrosClient {
       food_id: '0',
       food_name: params.name,
       calories: String(params.calories),
-      total_protein: String(params.protein),
-      total_carbs: String(params.carbs),
+      protein: String(params.protein),
+      carbs: String(params.carbs),
       total_fat: String(params.fat),
       serving_size: '1',
       serving_name: 'Serving',
       date: params.date,
     })
+  }
+
+  async createCustomFood(params: CreateCustomFoodParams): Promise<ApiResponse> {
+    return this.request<ApiResponse>('CreateCustomFood.php', {
+      food_name: params.name,
+      serving_size: String(params.servingSize),
+      serving_name: params.servingName,
+      brand: params.brand,
+      calories: String(params.calories),
+      total_fat: String(params.fat),
+      sat_fat: params.saturatedFat === undefined ? '' : String(params.saturatedFat),
+      mono_fat: params.monoFat === undefined ? '' : String(params.monoFat),
+      poly_fat: params.polyFat === undefined ? '' : String(params.polyFat),
+      cholesterol: String(params.cholesterol),
+      sodium: String(params.sodium),
+      carbs: String(params.carbs),
+      fiber: String(params.fiber),
+      sugar: String(params.sugar),
+      protein: String(params.protein),
+      food_type: params.foodType,
+      for_update: 'false',
+      food_id: '0',
+    })
+  }
+
+  async deleteCustomFood(params: DeleteCustomFoodParams): Promise<ApiResponse> {
+    return this.request<ApiResponse>('DeleteFood.php', { food_id: params.foodId })
   }
 
   async removeFood(params: RemoveFoodParams): Promise<ApiResponse> {
@@ -423,7 +452,7 @@ export function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
 
-export function num(s: string | undefined): number {
+export function num(s: string | null | undefined): number {
   const n = Number(s)
   return Number.isNaN(n) ? 0 : n
 }
@@ -434,9 +463,9 @@ export function normalizeFoodLogEntry(entry: ApiFoodLogEntry): NormalizedFoodEnt
     uniqueId: entry.uniqueID,
     foodId: entry.food_id,
     mealName: entry.meal_name,
-    foodName: entry.food_name.trim(),
+    foodName: entry.food_name?.trim() ?? '',
     servingSize: size,
-    servingName: entry.serving_name,
+    servingName: entry.serving_name ?? '',
     calories: round2(num(entry.calories) * size),
     protein: round2(num(entry.protein) * size),
     carbs: round2(num(entry.carbs) * size),

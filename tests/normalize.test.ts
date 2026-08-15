@@ -84,6 +84,25 @@ describe('normalizeFoodLogEntry', () => {
     expect(result.cholesterol).toBe(round2(0.5 * 19))
   })
 
+  it('tolerates null fields returned by malformed fast-track entries', () => {
+    const result = normalizeFoodLogEntry(
+      makeEntry({
+        food_name: null,
+        serving_name: null,
+        serving_size: null,
+        calories: null,
+        protein: null,
+        carbs: null,
+        total_fat: null,
+      }),
+    )
+    expect(result.foodName).toBe('')
+    expect(result.servingName).toBe('')
+    expect(result.servingSize).toBe(0)
+    expect(result.calories).toBe(0)
+    expect(result.protein).toBe(0)
+  })
+
   it('maps fields correctly', () => {
     const result = normalizeFoodLogEntry(makeEntry())
     expect(result.uniqueId).toBe('668')

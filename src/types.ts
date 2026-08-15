@@ -36,20 +36,20 @@ export interface ApiFoodLogEntry {
   food_id: string
   uniqueID: string
   meal_name: string
-  food_name: string
-  serving_name: string
-  serving_size: string
-  calories: string
-  total_fat: string
-  carbs: string
-  protein: string
-  saturated_fat: string
-  mono_fat: string
-  poly_fat: string
-  cholesterol: string
-  fiber: string
-  sugar: string
-  sodium: string
+  food_name: string | null
+  serving_name: string | null
+  serving_size: string | null
+  calories: string | null
+  total_fat: string | null
+  carbs: string | null
+  protein: string | null
+  saturated_fat: string | null
+  mono_fat: string | null
+  poly_fat: string | null
+  cholesterol: string | null
+  fiber: string | null
+  sugar: string | null
+  sodium: string | null
 }
 
 export interface FoodSearchApiResponse extends ApiResponse {
@@ -195,6 +195,29 @@ export interface QuickAddParams {
   mealId: string
   mealOrder: string
   date: string
+}
+
+export interface CreateCustomFoodParams {
+  name: string
+  servingSize: number
+  servingName: string
+  brand: string
+  calories: number
+  fat: number
+  saturatedFat: number | undefined
+  monoFat: number | undefined
+  polyFat: number | undefined
+  cholesterol: number
+  sodium: number
+  carbs: number
+  fiber: number
+  sugar: number
+  protein: number
+  foodType: string
+}
+
+export interface DeleteCustomFoodParams {
+  foodId: string
 }
 
 export interface RemoveFoodParams {

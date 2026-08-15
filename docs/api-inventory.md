@@ -79,7 +79,7 @@ All endpoints use `POST` with form data. Auth via `session_id` parameter (stored
 | Endpoint | Purpose | Key Parameters |
 |----------|---------|---------------|
 | `assets/script/Tracking/Food/SaveFood.php` | **Add food to meal** | `session_id`, `meal_id`, `meal_order`, `meal_name`, `food_user_id`, `food_id`, `serving_size`, `date` |
-| `assets/script/Tracking/Food/SaveFood.php` | **Fast Track add** | Same + `fast_track:true`, `total_fat`, `total_protein`, etc. |
+| `assets/script/Tracking/Food/SaveFood.php` | **Fast Track add** | Same + `fast_track:true`, `food_name`, `calories`, `protein`, `carbs`, `total_fat`, `serving_size`, `serving_name` |
 | `assets/script/Tracking/Food/UpdateFoodLog.php` | **Update food entry** | `session_id`, `date`, `food_id`, `pre_meal_name`, `pre_serving_name`, `pre_unique_id`, `new_meal_name`, `new_serving_size` |
 | `assets/script/Tracking/Food/RemoveFromMeal.php` | **Remove food from meal** | `session_id`, `date`, `meal_name`, `food_id`, `unique_id` |
 | `assets/script/Tracking/Food/alternateStarred.php` | **Star/unstar food** | `session_id`, `food_id`, `action` ("add" or "remove") |

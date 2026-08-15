@@ -46,6 +46,52 @@ function createClient(
 }
 
 describe('MyMacrosClient', () => {
+  describe('custom food requests', () => {
+    it('uses the current web-app payload for create and delete', async () => {
+      const { fetchImpl, calls } = mockFetch([
+        { body: { success: true, session_id: 'sess', uname: 'user' } },
+        { body: { success: true } },
+        { body: { success: true } },
+      ])
+      const client = createClient(
+        { MYMACROS_USER: 'user', MYMACROS_PASSWORD: 'pass' },
+        fetchImpl as typeof fetch,
+      )
+      await client.createCustomFood({
+        name: 'Strawberry Yogurt',
+        servingSize: 1,
+        servingName: 'cup',
+        brand: 'Too Good',
+        calories: 70,
+        fat: 1.5,
+        saturatedFat: 1,
+        monoFat: undefined,
+        polyFat: undefined,
+        cholesterol: 10,
+        sodium: 40,
+        carbs: 6,
+        fiber: 1,
+        sugar: 0,
+        protein: 13,
+        foodType: 'Dairy',
+      })
+      await client.deleteCustomFood({ foodId: '-123' })
+      expect(new URL(calls[1].url).pathname).toBe('/assets/script/CreateCustomFood.php')
+      expect(Object.fromEntries(new URLSearchParams(calls[1].body))).toMatchObject({
+        food_name: 'Strawberry Yogurt',
+        serving_size: '1',
+        serving_name: 'cup',
+        brand: 'Too Good',
+        protein: '13',
+        carbs: '6',
+        total_fat: '1.5',
+        for_update: 'false',
+        food_id: '0',
+      })
+      expect(new URL(calls[2].url).pathname).toBe('/assets/script/DeleteFood.php')
+    })
+  })
+
   describe('login', () => {
     it('stores a session on successful login', async () => {
       const { fetchImpl } = mockFetch([
@@ -353,8 +399,8 @@ describe('MyMacrosClient', () => {
           food_id: '0',
           food_name: 'Quick',
           calories: '100',
-          total_protein: '10',
-          total_carbs: '5',
+          protein: '10',
+          carbs: '5',
           total_fat: '2',
           serving_size: '1',
           serving_name: 'Serving',

@@ -127,7 +127,7 @@ export function registerAddCommand(program: Command, ctx: CliContext): void {
   // Quick add (fast track)
   program
     .command('add-quick')
-    .description('Quick-add food by macros (creates a persistent custom food)')
+    .description('Quick-add food by macros to a meal (fast track)')
     .option('--name <name>', 'Food name (required)')
     .option('--cal <n>', 'Calories (required)')
     .option('--protein <n>', 'Protein grams (required)')

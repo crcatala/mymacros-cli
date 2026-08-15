@@ -127,8 +127,14 @@ mymacros dates --limit 10
 # Add a food (fetches food details automatically for required params)
 mymacros add 164298 --meal Breakfast --serving 2
 
-# Quick-add by macros (creates a persistent custom food)
+# Quick-add by macros (logs a fast-track food to a meal)
 mymacros add-quick --name "Protein shake" --cal 200 --protein 30 --carbs 10 --fat 3
+
+# Create a persistent custom food (paid web access required)
+mymacros create-food --name "Too Good Zero Sugar Strawberry Yogurt" \
+  --serving-size 1 --serving-name cup --brand "Too Good" \
+  --cal 70 --fat 1.5 --sat-fat 1 --cholesterol 10 --sodium 40 \
+  --carbs 6 --fiber 1 --sugar 0 --protein 13 --type Dairy
 
 # Update serving size or move between meals
 mymacros update 668 --serving 3
@@ -160,6 +166,9 @@ mymacros note ""
 # Star / unstar a food
 mymacros star 164298
 mymacros unstar 164298
+
+# Delete a custom food definition
+mymacros delete-food -2288
 ```
 
 ## Output Modes
@@ -174,6 +183,31 @@ mymacros unstar 164298
 | `--debug` | Show HTTP request/response details |
 
 Command data is always written to stdout; progress, status, warnings, and errors go to stderr, so piping output stays machine-safe.
+
+### Manual Custom-Food Verification
+
+Custom-food creation and deletion require a paid account with web access. These commands mutate the account; use a dedicated test account and a disposable food name:
+
+```bash
+mymacros auth status --json
+mymacros create-food --name "CLI Verification Food" --serving-name cup \
+  --brand "CLI Test" --cal 70 --fat 1.5 --sat-fat 1 \
+  --cholesterol 10 --sodium 40 --carbs 6 --fiber 1 --sugar 0 \
+  --protein 13 --type Dairy --json
+mymacros browse custom --limit 0 --json | jq '.foods[] | select(.foodName == "CLI Verification Food")'
+mymacros search "CLI Verification Food" --json
+# Use the returned negative foodId after confirming it is the test food:
+mymacros delete-food <food_id> --json
+```
+
+Fast-track verification (logs a meal entry and may not create a reusable custom-food definition):
+
+```bash
+mymacros add-quick --name "CLI Fast Track Verification" \
+  --cal 70 --protein 13 --carbs 6 --fat 1.5 --meal Breakfast --debug
+```
+
+Do not add paid-account mutations to the default live test suite unless the suite is explicitly configured with a dedicated paid test account. Keep `MYMACROS_LIVE_TESTS` disabled for personal accounts.
 
 ### JSON Output (Agent Use)
 
@@ -321,7 +355,7 @@ These features are out of scope for this CLI:
 - Weight tracking (`Weight.php`)
 - Settings / profile / goals (`Settings.php`)
 - Recipe management
-- Custom food creation (`CreateCustomFood.php`)
+- Custom food creation (`CreateCustomFood.php`) via `mymacros create-food` (requires paid web access)
 
 ## Contributing and security
 

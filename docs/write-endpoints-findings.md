@@ -66,11 +66,11 @@ POST assets/script/Tracking/Food/SaveFood.php
 
 **Response:** `{"success":true}`
 
-### ⚠️ Key Finding: Fast Track Creates Persistent Custom Foods
-- Fast track creates a **new custom food** in the database (gets a negative foodID like -28206)
-- This food persists even after removing it from the meal
-- It shows up in Custom & Favs thereafter
-- `DeleteFood.php` can be called to remove it, though the food may still be retrievable via GetFoodItem after deletion (possible soft delete)
+### ⚠️ Current behavior: Fast Track is not the custom-food creation path
+- The web UI sends `protein` and `carbs` (not `total_protein` or `total_carbs`); `total_fat` remains the fat field.
+- On the currently observed account/API behavior, fast track returned `success:true` but produced a meal entry with `food_id=0` and null food/nutrition fields.
+- It did not appear in Custom & Favorites or regular food search.
+- Use `CreateCustomFood.php` for persistent custom-food definitions. Fast-track behavior may vary with server/account version and should be verified before relying on it.
 
 ---
 
@@ -206,7 +206,7 @@ POST assets/script/Tracking/Food/ReorderMeals.php
 | Behavior | Impact |
 |----------|--------|
 | **uniqueID changes on update** | Must re-read DM.php after any mutation to get current IDs |
-| **Fast track creates persistent foods** | Side effect: grows Custom & Favs list over time |
+| **Fast track behavior varies** | Use `CreateCustomFood.php` for persistent custom foods; verify fast-track responses and tolerate malformed records |
 | **serving_name required on SaveFood** | Omitting causes silent Code 541 failure |
 | **copied_unique_ids required on CopyMeal** | Must provide JSON array, not just meal name |
 | **Notes "clear" leaves empty strings** | Key persists in response with `""` value |
