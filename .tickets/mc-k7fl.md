@@ -33,3 +33,7 @@ Use the observed web requests as the endpoint contract. Fast-track sends protein
 **2026-08-15T16:14:59Z**
 
 Implemented the first pass: fast-track now sends protein/carbs field names used by the web UI; added create-food and delete-food commands/endpoints; aligned Custom & Favorites category name; made daily food normalization null-safe; added request/normalization tests and README manual paid-account verification guidance. Live tests were not run because auth was cleared and paid mutations must remain opt-in.
+
+**2026-08-15T16:15:54Z**
+
+Implementation committed on fix/custom-food-cli and PR opened: https://github.com/crcatala/mymacros-cli/pull/28
