@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added commands to create and delete custom foods.
+
+### Changed
+
+- Improved custom food browsing and creation workflows.
+
+### Fixed
+
+- Corrected fast-track custom food request payload fields.
+- Improved tolerance for malformed API log fields.
+
 ## [0.3.0] - 2026-08-02
 
 ### Added
