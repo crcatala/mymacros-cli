@@ -121,7 +121,7 @@ describe('CLI commands with a mocked client', () => {
     expect(client.getDailyMeals).toHaveBeenCalled()
     expect(client.searchFood).toHaveBeenCalledWith('egg', 25)
     expect(client.browseCategories).toHaveBeenCalledWith(5)
-    expect(client.browseFoods).toHaveBeenCalledWith(1, 'Custom & Favs', 25)
+    expect(client.browseFoods).toHaveBeenCalledWith(1, 'Custom & Favorites', 25)
   })
 
   it('logs in with environment credentials without touching real storage', async () => {

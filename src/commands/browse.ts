@@ -11,7 +11,7 @@ const CATEGORY_MAP: Record<
   string,
   { menuId: number; directFood: boolean; defaultCatName?: string }
 > = {
-  custom: { menuId: 1, directFood: true, defaultCatName: 'Custom & Favs' },
+  custom: { menuId: 1, directFood: true, defaultCatName: 'Custom & Favorites' },
   recent: { menuId: 2, directFood: true, defaultCatName: 'Recent' },
   frequent: { menuId: 3, directFood: false },
   recipes: { menuId: 4, directFood: true, defaultCatName: 'Recipes' },
