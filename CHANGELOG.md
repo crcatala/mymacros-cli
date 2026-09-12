@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-+
-- Restored authentication after the GetMyMacros web app replaced `login.php` with `login2.php`.
+
+- Restored authentication by switching to the migrated `login2.php` endpoint.
 
 ## [0.4.0] - 2026-08-15
 
