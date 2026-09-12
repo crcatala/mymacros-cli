@@ -162,8 +162,13 @@ describe('MyMacrosClient', () => {
       await client.ensureSession()
 
       expect(calls).toHaveLength(1)
-      expect(calls[0].url).toContain('login.php')
-      expect(calls[0].body).toContain('username=envuser')
+      expect(calls[0].url).toContain('login2.php')
+      expect(Object.fromEntries(new URLSearchParams(calls[0].body))).toMatchObject({
+        username: 'envuser',
+        password: 'envpass',
+        source: 'mm-web',
+        action: 'login',
+      })
     })
 
     it('throws when no session is cached and env vars are absent', async () => {

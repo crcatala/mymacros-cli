@@ -3,7 +3,7 @@
 ## Login Endpoint
 
 ```
-POST https://getmymacros.com/assets/script/login.php
+POST https://getmymacros.com/assets/script/login2.php
 Content-Type: application/x-www-form-urlencoded
 ```
 
@@ -13,7 +13,7 @@ Content-Type: application/x-www-form-urlencoded
 | `username` | ✅ | |
 | `password` | ✅ | Missing password still returns "password does not match" (not "missing") |
 | `action` | ✅ | Must be `"login"` — omitting causes `success:false` |
-| `source` | ❌ | Optional. Web UI sends `"mm-web"` but omitting still works |
+| `source` | ✅ | Web UI sends `"mm-web"` |
 
 ### Headers
 - **No special headers required** — no User-Agent, no Content-Type header needed
@@ -83,8 +83,8 @@ The `no_session:true` flag is the key indicator that re-authentication is needed
 Minimal working example:
 ```bash
 # Login (store session securely)
-SID=$(curl -s 'https://getmymacros.com/assets/script/login.php' \
-  -d "username=$MYMACROS_USER&password=$MYMACROS_PASSWORD&action=login" \
+SID=$(curl -s 'https://getmymacros.com/assets/script/login2.php' \
+  -d "username=$MYMACROS_USER&password=$MYMACROS_PASSWORD&source=mm-web&action=login" \
   | python3 -c "import json,sys; print(json.load(sys.stdin)['session_id'])")
 
 # Use session for any API call
