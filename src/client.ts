@@ -64,9 +64,12 @@ export class MyMacrosClient {
   // ============================================================================
 
   async login(username: string, password: string): Promise<LoginResponse> {
-    const response = await this.rawRequest<LoginResponse>('login.php', {
+    // The web app migrated from login.php to login2.php; all authenticated
+    // endpoints still live under the same assets/script base path.
+    const response = await this.rawRequest<LoginResponse>('login2.php', {
       username,
       password,
+      source: 'mm-web',
       action: 'login',
     })
 
