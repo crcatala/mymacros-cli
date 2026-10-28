@@ -81,6 +81,13 @@ describe('update command', () => {
     expect(result.exitCode).toBe(0)
   })
 
+  it('rejects entry options without an ID instead of self-updating', async () => {
+    const result = await run(['update', '--serving', '2'])
+    expect(result.exitCode).toBe(2)
+    expect(result.err).toContain('unique_id is required to update a food entry')
+    expect(meta.runUpdate).not.toHaveBeenCalled()
+  })
+
   it('still updates a food entry when an ID is given', async () => {
     const result = await run(['update', 'entry-1'])
     expect(result.exitCode).toBe(2)

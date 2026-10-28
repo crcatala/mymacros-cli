@@ -28,13 +28,12 @@ export function registerUpdateCommand(program: Command, ctx: CliContext): void {
     .action(async (uniqueId: string | undefined, opts: UpdateCommandOptions) => {
       // Without an entry ID this is mymacros' own self-update, not a food-log edit.
       if (!uniqueId) {
+        if (opts.serving || opts.meal) {
+          logError(ctx, 'unique_id is required to update a food entry.')
+          process.exitCode = 2
+          return
+        }
         process.exitCode = runUpdate('mymacros', { check: opts.check, force: opts.force })
-        return
-      }
-
-      if (!uniqueId.trim()) {
-        logError(ctx, 'unique_id is required.')
-        process.exitCode = 2
         return
       }
 
