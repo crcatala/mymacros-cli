@@ -1,5 +1,6 @@
 import { Command, CommanderError } from 'commander'
 import packageJson from '../../package.json' with { type: 'json' }
+import { versionLine } from '../cli-meta.js'
 import { registerAddCommand } from '../commands/add.js'
 import { registerBrowseCommand } from '../commands/browse.js'
 import { registerCopyMealCommand } from '../commands/copy-meal.js'
@@ -15,6 +16,7 @@ import { registerRemoveCommand } from '../commands/remove.js'
 import { registerSearchCommand } from '../commands/search.js'
 import { registerStarCommands } from '../commands/star.js'
 import { registerUpdateCommand } from '../commands/update.js'
+import { registerVersionCommand } from '../commands/version.js'
 import type { CliContext } from './context.js'
 import { configureStyledHelp } from './help.js'
 import { addOutputOptions } from './options.js'
@@ -99,7 +101,7 @@ ${ctx.colors.section('Agent Usage Notes')}
   program
     .name('mymacros')
     .description('Unofficial GetMyMacros CLI — optimized for AI agent use')
-    .version(VERSION)
+    .version(versionLine('mymacros'), '-V, --version', 'print the version and commit')
     .showHelpAfterError(true)
 
   addOutputOptions(program)
@@ -120,6 +122,7 @@ ${ctx.colors.section('Agent Usage Notes')}
   registerDeleteMealCommand(program, ctx)
   registerNoteCommand(program, ctx)
   registerStarCommands(program, ctx)
+  registerVersionCommand(program, ctx)
 
   configureStyledHelp(program, ctx)
 

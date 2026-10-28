@@ -2,17 +2,36 @@ import type { Command } from 'commander'
 import { createClient } from '../cli/client.js'
 import type { CliContext } from '../cli/context.js'
 import { logError, logSuccess, logWarning, output, writeData } from '../cli/output.js'
+import { runUpdate } from '../cli-meta.js'
 import { resolveDate } from '../lib/date.js'
+
+export type UpdateCommandOptions = {
+  serving?: string
+  meal?: string
+  date: string
+  check?: boolean
+  force?: boolean
+}
 
 export function registerUpdateCommand(program: Command, ctx: CliContext): void {
   program
-    .command('update')
-    .description('Update a food entry (serving size or move between meals)')
-    .argument('<unique_id>', 'Unique entry ID (from daily command output)')
-    .option('--serving <n>', 'New serving size')
-    .option('--meal <name>', 'Move to this meal')
+    .command('update [unique_id]')
+    .description('Update a food entry (with an ID), or update mymacros itself (without one)')
+    .option('--serving <n>', 'New serving size (food entry)')
+    .option('--meal <name>', 'Move to this meal (food entry)')
     .option('--date <date>', 'Date (YYYY-MM-DD, today, yesterday, tomorrow)', 'today')
-    .action(async (uniqueId: string, opts: { serving?: string; meal?: string; date: string }) => {
+    .option(
+      '--check',
+      'Without an ID: report only (exit 0 up to date, 1 update available, 2 unknown)',
+    )
+    .option('--force', 'Without an ID: update even when already up to date')
+    .action(async (uniqueId: string | undefined, opts: UpdateCommandOptions) => {
+      // Without an entry ID this is mymacros' own self-update, not a food-log edit.
+      if (!uniqueId) {
+        process.exitCode = runUpdate('mymacros', { check: opts.check, force: opts.force })
+        return
+      }
+
       if (!uniqueId.trim()) {
         logError(ctx, 'unique_id is required.')
         process.exitCode = 2
