@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Update the CLI in place** — `mymacros update` (no argument) updates the tool the
+  way it was installed: it pulls, reinstalls, and rebuilds a source checkout, and reinstalls the
+  registry release for global npm, pnpm, bun, or mise installs. `update --check` reports only
+  (exit 0 up to date, 1 update available, 2 unknown) and `update --force` updates even when
+  already current. `mymacros update <id> --serving N` still updates a logged food entry.
+- **`mymacros version`** — prints version, full commit, commit date, source-checkout status, and
+  install path; `--json` returns the same details as an object.
+
+### Changed
+
+- `--version` now prints `mymacros X.Y.Z (sha7 YYYY-MM-DD)` (`-dirty` for an uncommitted build),
+  so a local build and an npm install report the commit they came from.
+
 ## [0.4.1] - 2026-09-11
 
 ### Fixed

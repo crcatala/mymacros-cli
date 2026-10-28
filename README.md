@@ -16,25 +16,43 @@ The client is based on observed web-app behavior. See `docs/` for implementation
 - **Secure session storage** — OS keyring by default, with an explicit `0600` config-file fallback for headless environments
 - **Scriptable defaults** — date shortcuts, input validation, result limits, and plain or table output when needed
 
-## Installation
+## Install
 
 ```bash
-npm install -g mymacros-cli
+npm install -g mymacros-cli        # or: pnpm add -g mymacros-cli, bun add -g mymacros-cli
+npx mymacros-cli --help            # run without installing
 ```
 
-Or run it without installing:
+Requires Node.js `^22.21.0 || >=24.0.0`.
 
-```bash
-npx mymacros-cli --help
-```
-
-For development:
+### From source
 
 ```bash
 git clone https://github.com/crcatala/mymacros-cli.git
 cd mymacros-cli
 npm ci
+npm run build
+npm link                    # puts `mymacros` on your PATH, pointing at this clone
+mymacros --version          # mymacros X.Y.Z (sha7 YYYY-MM-DD): the commit you built
 ```
+
+Rebuild after pulling (`npm run build`); the link keeps pointing at the clone.
+If `mymacros` is also installed globally, remove that copy so the linked build is
+the one on `PATH` (`command -v mymacros` should resolve inside the clone).
+
+### Updating
+
+```bash
+mymacros update --check     # exit 0: up to date, 1: update available, 2: unknown
+mymacros update             # updates the same way it was installed
+```
+
+`mymacros update` follows how the CLI was installed: it pulls, rebuilds and
+installs dependencies for a source checkout (refusing when the tree is dirty or
+not on `main`), and reinstalls the latest npm release for a global npm, pnpm or
+bun install. `mymacros update --force` updates even when already current.
+`mymacros update <unique_id> --serving 3` still updates a food entry, as shown
+under [Tracking Food](#tracking-food).
 
 ## Quick Start
 
@@ -82,6 +100,11 @@ npx tsx src/cli.ts <command>
 # Or build and run from dist
 npm run build
 node dist/cli.js <command>
+
+# Which build is on PATH, with commit and install details
+mymacros --version
+mymacros version
+mymacros version --json
 
 # Check or clear locally stored credentials
 mymacros auth status
@@ -281,6 +304,7 @@ src/
   cli.ts              # Entrypoint
   cli-main.ts         # Testable main (DI pattern)
   run.ts              # Commander setup
+  cli-meta.ts         # Version line, install detection and self-update
   client.ts           # HTTP client — auth, secure session cache, API methods, normalization
   credentials.ts      # Keyring and protected-config session storage
   types.ts            # API + normalized output types
@@ -297,7 +321,7 @@ src/
   commands/           # One file per command
     login.ts, daily.ts, search.ts, food.ts, browse.ts, dates.ts,
     add.ts, remove.ts, update.ts, copy-meal.ts, delete-meal.ts,
-    note.ts, star.ts
+    note.ts, star.ts, version.ts
   lib/
     date.ts           # Date parsing/formatting
 tests/
